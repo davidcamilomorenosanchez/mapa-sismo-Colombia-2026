@@ -1,0 +1,63 @@
+name: Actualizar mapa con fuente oficial
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Consultar fuente oficial
+        env:
+          OFFICIAL_SOURCE_URL: ${{ vars.OFFICIAL_SOURCE_URL }}
+        run: |
+          python - <<'PY'
+          import os, sys, urllib.request, pathlib, datetime
+
+          url = os.environ.get("OFFICIAL_SOURCE_URL", "").strip()
+          if not url:
+              print("OFFICIAL_SOURCE_URL no está configurada. No se modifica el sitio.")
+              sys.exit(0)
+
+          req = urllib.request.Request(url, headers={"User-Agent":"MapaSismoColombia/1.0"})
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  data = r.read()
+          except Exception as e:
+              print("No se pudo consultar la fuente oficial:", e)
+              sys.exit(0)
+
+          if len(data) < 100:
+              print("Respuesta demasiado pequeña; no se modifica el sitio.")
+              sys.exit(0)
+
+          out = pathlib.Path("official-source-latest.bin")
+          out.write_bytes(data)
+          pathlib.Path("official-source-url.txt").write_text(url, encoding="utf-8")
+          print("Fuente oficial descargada:", url, "bytes:", len(data))
+          PY
+
+      - name: Validar antes de publicar
+        run: |
+          test -f index.html
+          test -f app.js
+          test -f data.js
+          echo "Archivos del sitio OK"
+          if test -f official-source-latest.bin; then
+            echo "Fuente oficial disponible; el parser específico se habilitará cuando UNGRD publique un feed estable."
+          fi
+
+      - name: Guardar nueva consulta
+        run: |
+          git config user.name "mapa-sismo-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add official-source-latest.bin official-source-url.txt || true
+          git diff --cached --quiet && echo "Sin cambios" || git commit -m "chore: consultar fuente oficial UNGRD" && git push

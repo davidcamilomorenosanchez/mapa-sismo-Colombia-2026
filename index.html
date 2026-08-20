@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mapa de afectaciones — Sismo Colombia 2026</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+<header>
+  <div>
+    <span class="eyebrow">INFORMACIÓN PÚBLICA · EMERGENCIA</span>
+    <h1>Mapa de afectaciones — Sismo Colombia</h1>
+    <p>Víctimas, municipios afectados e infraestructura reportada, con fuente y estado de verificación.</p>
+  </div>
+  <div class="live"><span></span> Corte oficial visible</div>
+</header>
+
+<section class="notice">
+  <b>Regla de seguridad:</b> este mapa no autoriza el ingreso a edificios afectados.
+  Una ubicación marcada como reportada requiere coordinación con organismos de emergencia antes de desplazarse.
+</section>
+
+<section class="metrics" id="metrics"></section>
+<div class="filter-note" id="filterNote"></div>
+
+<section class="controls">
+  <label>Departamento<select id="department"><option value="">Todos</option></select></label>
+  <label>Ciudad<select id="city"><option value="">Todas</option></select></label>
+  <label>Mostrar<select id="type">
+    <option value="">Todos los puntos</option>
+    <option value="colapso">Colapso reportado</option>
+    <option value="afectado">Afectación reportada</option>
+    <option value="infraestructura">Infraestructura</option>
+  </select></label>
+  <button id="locate">Mi ubicación</button>
+  <button id="reset" class="secondary">Restablecer filtros</button>
+  <span id="status">Cargando…</span>
+</section>
+
+<main>
+  <div class="map-card">
+    <div id="map-loading">Cargando mapa…</div>
+    <div id="map"></div>
+  </div>
+  <aside>
+    <div class="panel-head"><h2>Ubicaciones reportadas</h2><span id="count"></span></div>
+    <div id="points"></div>
+  </aside>
+</main>
+
+<section class="sources">
+  <h2>Fuentes y actualización</h2>
+  <p><b>Balance:</b> 265 fallecidos, 3.494 heridos y 496 desaparecidos, según el balance más reciente localizado del 13 de agosto de 2026. La página conserva la fecha y fuente del corte; no lo presenta como tiempo real.</p>
+  <p><b>Filtros:</b> las cifras de víctimas solo se desglosan por departamento cuando existe una fuente oficial con ese desglose. En ausencia de ese dato, el filtro modifica únicamente los indicadores de puntos/infraestructura para evitar inventar cifras.</p>
+  <p><b>Ubicaciones:</b> los sitios están clasificados por precisión. Cuando la fuente no entrega coordenadas exactas, el mapa muestra una zona aproximada y lo indica claramente.</p>
+  <p>Fuente geográfica: OpenStreetMap / CARTO. <span id="sourceLink"></span></p>
+</section>
+
+<p><b>Edificios:</b> la capa fue revisada con reportes publicados el 12–13 de agosto. Mezcla reportes de prensa y fuentes institucionales; cada registro identifica su fuente y fecha. No se presentan rumores como confirmaciones.</p>
+<footer>Proyecto ciudadano de información pública · No sustituye a UNGRD, alcaldías, bomberos, Defensa Civil, Cruz Roja ni autoridades técnicas.</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
